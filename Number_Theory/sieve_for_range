@@ -23,6 +23,7 @@ void sieve(ll n)
 void PrimeRange(ll low, ll high)
 {
     ll start,i,j,limit;
+    if(high<2LL) return;
     if(low<2LL)
         low=2LL;
     limit=sqrt(high+1);
