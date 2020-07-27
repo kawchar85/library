@@ -56,7 +56,7 @@ ll dvd(ll A, ll B)
 
 ll sub(ll A, ll B)
 {
-    return (A-B+MOD)%MOD;
+    return (A%MOD-B%MOD+MOD)%MOD;
 }
 
 int main()
