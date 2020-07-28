@@ -77,6 +77,17 @@ ll Fibo_n(ll n)
     return I[1][0];
 }
 
+//n,f0,f1
+ll Fibo_n(ll n, ll f, ll s)
+{
+    if(n==0LL) return f%MOD;
+    if(n==1LL) return s%MOD;
+    init();
+    power(A, n-1);
+    //print();
+    return (((s%MOD)*I[0][0])%MOD + ((f%MOD)*I[1][0])%MOD)%MOD;
+}
+
 int main()
 {
     ll n;
