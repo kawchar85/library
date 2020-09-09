@@ -17,10 +17,9 @@ ll get_profit(ll cap, ll n)
 
     for(i=0; i<n; i++)
     {
-        for(j=cap; j>0; j--)
+        for(j=cap; j>=wt[i]; j--)
         {
-            if(wt[i]<=j)
-                dp[j]=max(dp[j], dp[j-wt[i]]+profit[i]);
+            dp[j]=max(dp[j], dp[j-wt[i]]+profit[i]);
         }
     }
 
