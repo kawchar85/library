@@ -1,4 +1,6 @@
 ///how many way?
+//1+2+1, 1+1+2 are same
+
 #include<bits/stdc++.h>
 #define MAX 10000
 using namespace std;
