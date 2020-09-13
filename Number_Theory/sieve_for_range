@@ -32,11 +32,7 @@ void PrimeRange(ll low, ll high)
 
     for(i=0; i<prime.size(); i++)
     {
-        start=(low/prime[i])*prime[i];
-        if(start<low)
-            start+=prime[i];
-        if(start==prime[i])
-            start+=prime[i];
+        start=max(prime[i]*prime[i], ((low+prime[i]-1)/prime[i])*prime[i]);
 
         for(j=start; j<=high; j+=prime[i])
             mark[j-low]=1;
