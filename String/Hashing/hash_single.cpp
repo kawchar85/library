@@ -1,27 +1,3 @@
-/**
-    Problem "202. Searching of asubstring" from acmp.ru
-
-    Title: Searching of a substring
-
-	(Time limit: 0,5 sec. Memory limit: 16 MB Difficulty: 38%)
-
-	Find all occurrences of the string T in the string S.
-
-	Input:
-
-	The first line of the input file INPUT.TXT contains the string S, the second
-	line contains the string T. Both lines consist only of English letters. The
-	lengths of the lines can be in the range from 1 to 50 000 inclusive.
-
-	Output:
-
-	The output file OUTPUT.TXT needs to output all positions of the occurrence
-	of the string T in the string S in ascending order. The numbering of line
-	items starts from zero.
-
-    Solution: polynomial hash, O(n)
-*/
-
 #include<bits/stdc++.h>
 #define MAX 50004
 #define ll long long
