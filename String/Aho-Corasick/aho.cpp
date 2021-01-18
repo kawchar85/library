@@ -1,5 +1,11 @@
+/**
+    Given a set of strings and a text.
+    We have to count all occurrences 
+    of all strings from the set in 
+    the given text.
+*/
 #include<bits/stdc++.h>
-#define MAX 200005
+#define MAX 5200005
 #define FAST ios_base::sync_with_stdio(false); cin.tie(NULL);
 using namespace std;
 
@@ -65,11 +71,13 @@ void push_links()
         }
     }
 }
-int CNT(vector<int> &v)
+
+int CNT(string &s)
 {
     int u=0,sum=0;
-    for(auto x : v)
+    for(auto ch : s)
     {
+        int x=ID(ch);
         u=transition(u, x);
         sum+=aho[u].ending;
     }
@@ -79,13 +87,33 @@ int CNT(vector<int> &v)
 void delete_aho()
 {
     counter=1;
-    memset(aho, -1, sizeof aho);
+    memset(aho, -1, sizeof aho); //ending=-1, wtf?
+    for(int i=0; i<MAX; i++)
+        aho[i].ending=0;
 }
 
 int main()
 {
     FAST
+    string s;
+    int n,i,j,k;
 
+    while(cin>>n)
+    {
+        cin.ignore();
+        vector<string> v;
+        for(i=0; i<n; i++)
+        {
+            getline(cin,s);
+            ADD(s);
+            v.push_back(s);
+        }
+        push_links();
+        getline(cin,s);
+        cout<<CNT(s)<<endl;
+        delete_aho();
+
+    }
 
     
     return 0;
