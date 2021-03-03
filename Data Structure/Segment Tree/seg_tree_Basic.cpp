@@ -89,6 +89,17 @@ void update(int node,int l,int r,int pos,int val)
 
 }
 
+int search_index(int node, int l, int r, int sum)
+{
+    int mid=(l+r)/2;
+    if(l==r)
+        return l;
+    int x=tree[2*node].sum;
+    if(sum<=x)
+       return search_index(2*node, l, mid, sum);
+    else
+       return search_index(2*node+1, mid+1, r, sum-x);
+}
 void print(int node, int l,int r)
 {
     cout<<"["<<l<<","<<r<<"]:--> ";
@@ -112,6 +123,10 @@ void update(int pos, ll val){ //arr[pos]=val
 void query(int i, int j){
     auto x = query(1, 0, N-1, i, j);
     x.show();
+}
+int getIndex(int sum){ //where arr[0...i]=sum
+    return search_index(1, 0, N-1, sum);
+
 }
 int main()
 {
