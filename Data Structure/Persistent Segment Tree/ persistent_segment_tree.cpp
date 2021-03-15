@@ -1,4 +1,5 @@
 //https://www.spoj.com/problems/PSEGTREE/
+
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -62,6 +63,17 @@ int query(int node, int l, int r, int i, int j)
     int y=query(tree[node].R, mid+1, r, i, j);
     return merge(x,y);
 }
+int k_th(int cur, int pre, int l, int r, int k)
+{
+    if(l==r)
+        return l;
+    int mid=(l+r)/2;
+    int l_val=tree[tree[cur].L].val-tree[tree[pre].L].val;
+    if(k<=l_val)
+        return k_th(tree[cur].L, tree[pre].L, l, mid, k);
+    else
+        return k_th(tree[cur].R, tree[pre].R, mid+1, r, k-l_val);
+}
 void build(int n)
 {
     N=n;
@@ -77,6 +89,10 @@ void update(int version, int pos, int x)
 int query(int version, int i, int j)
 {
     return query(root[version], 0, N-1, i, j);
+}
+int k_th(int l, int r, int k) 
+{
+    return k_th(root[r], root[l-1], 1, N, k);
 }
 
 int main()
