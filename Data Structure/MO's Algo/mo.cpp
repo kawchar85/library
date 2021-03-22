@@ -9,12 +9,20 @@ struct query{
 query Q[MAX];
 int ar[MAX], ans[MAX], fre[1000006],cnt=0;
 
+bool cmp(query &a, query &b)
+{
+    if(a.l/B_SIZE != b.l/B_SIZE)
+        return a.l<b.l;
+    return a.l/B_SIZE%2?a.r>b.r:a.r<b.r;
+}
+/*
 bool cmp(query a, query b)
 {
     if(a.l/B_SIZE==b.l/B_SIZE)
         return a.r<b.r;
     return a.l/B_SIZE < b.l/B_SIZE;
 }
+*/
 void add(int pos)
 {
     fre[ar[pos]]++;
