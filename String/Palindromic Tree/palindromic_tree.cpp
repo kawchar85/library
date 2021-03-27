@@ -9,6 +9,7 @@ struct Palindromic_Tree{
     int tree[N][t_sz], idx;
     int len[N], link[N], t,n;
     int endHere[N],occ[N],total=0;
+    int stop[N];//right id of pal, need for printing
     string s="#";
 
     Palindromic_Tree(){
@@ -34,7 +35,9 @@ struct Palindromic_Tree{
         }
         
         t = tree[t][c];
+
         occ[t]++;
+        stop[t]=p;
     }
 
     void init(string &ss)
@@ -48,8 +51,14 @@ struct Palindromic_Tree{
             //palindrom end in pos i=endHere[t]
             //cout<<i<<"-->"<<endHere[t]<<endl;
         }
-        for(int i = idx; i > 2; i--) 
+        for(int i = idx; i > 2; i--)
+        {
             occ[link[i]] += occ[i];
+
+            //print palindrom
+            //int r=stop[i],l=stop[i]-len[i]+1;
+            //cout<<s.substr(l,len[i])<<endl;
+        }
 
         //print();
     }
