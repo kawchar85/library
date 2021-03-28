@@ -1,3 +1,5 @@
+//https://vjudge.net/problem/Gym-100548G
+
 /**
     Given two strings A and B, what
     is the number of their common 
@@ -16,8 +18,8 @@
 using namespace std;
 #define ll long long 
 
-const int N = 400015;
-const int t_sz= 135;
+const int N = 1000006;
+const int t_sz= 30;
 
 struct Palindromic_Tree{
     
@@ -45,7 +47,7 @@ struct Palindromic_Tree{
     void add(int p)
     {
         while(s[p-len[t]-1] != s[p]) t = link[t];
-        int x = link[t], c = s[p];
+        int x = link[t], c = s[p]-'a';
         while(s[p-len[x]-1] != s[p]) x = link[x];
         
         if(!tree[t][c])
@@ -91,7 +93,8 @@ struct Palindromic_Tree{
     void clear(){
         for(int i=0; i<=idx; i++)
         {
-            occ[i]=0;/*endHere[i]=0*/;len[i]=link[i]=0;
+            occ[i]=0;
+            len[i]=link[i]=0;
             for(int j=0; j<t_sz; j++)
                 tree[i][j]=0;
         }
@@ -119,7 +122,9 @@ ll commonPalindrom(string &s, string &s2)
         cnt[i][0]=p.occ[i];
 
     p.clear();
-    s=s+"#"+s2;
+    //s=s+"#"+s2;
+    s+=char('a'+26);//invalid
+    s+=s2;
     p.init(s);
     for(int i=3; i<=p.idx; i++)
         cnt[i][1]=p.occ[i];
