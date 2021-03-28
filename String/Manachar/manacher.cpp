@@ -7,14 +7,14 @@ using namespace std;
 
 int d[2][MAX]; //d[0]-->even len, d[1]-->odd len
 
-void manachar(string s)
+void manachar(string &s)
 {
     int n=(int)s.size();
     for(int t=0; t<2; t++)
     {
         for(int i=0, l=0, r=-1; i<n; i++)
         {
-            int k=(i>r)? 0:min(d2[l+r-i+t], r-i+1);
+            int k=(i>r)? 0:min(d[t][l+r-i+t], r-i+1);
             while(0<=i-k-t && i+k<n && s[i-k-t]==s[i+k]) 
                 k++;
             d[t][i]=k--;
