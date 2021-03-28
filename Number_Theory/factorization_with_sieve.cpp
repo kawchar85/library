@@ -24,8 +24,7 @@ void sieve()
 ///primes= sqrt(n)/ln(sqrt(n))
 void Factorization(ll n)
 {
-    ll sq=sqrt(n),i;
-    for(i=0; i<prime.size()&&prime[i]<=sq; i++)
+    for(ll i=0; i<prime.size()&&prime[i]*prime[i]<=n; i++)
     {
         if(n%prime[i]==0)
         {
@@ -34,7 +33,6 @@ void Factorization(ll n)
                 fact.pb(prime[i]);
                 n/=prime[i];
             }
-            sq=sqrt(n);
         }
     }
     if(n>1)
