@@ -1,4 +1,11 @@
-//https://codeforces.com/contest/118/problem/E
+/**
+You are given an undirected connected graph G.
+Direct all of its edges so that the resulting
+digraph is strongly connected, or declare that
+this is impossible.
+
+https://codeforces.com/contest/118/problem/E
+*/
 
 #include<bits/stdc++.h>
 using namespace std;
