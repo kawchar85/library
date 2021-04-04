@@ -4,6 +4,9 @@ using namespace std;
      z[i] is the length of the
      longest common prefix between
      s and the suffix of s starting at i.
+
+     longest common prefix between
+     s[1...n], s[i...n]
 */
 
 //O(s.size())
@@ -25,10 +28,11 @@ vector<int> z_function(string s)
 
 int main()
 {
-    vector<int> z = z_function("abacaba");
+    string s;
+    cin>>s;
+    vector<int> z = z_function(s);
     for(auto x : z)
         cout<<x<<" ";
 
-
-    return 0;
 }
+   
