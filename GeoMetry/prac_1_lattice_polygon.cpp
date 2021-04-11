@@ -1,5 +1,5 @@
 /**
-    A convex lattice polygon with coordinates in [0, N] has at most O(N2 / 3) vertices
+    A convex lattice polygon with coordinates in [0, N] has at most O(N^(2/3)) vertices
     https://algo.codemarshal.org/contests/icpc-dhaka-20-preli/problems/A
 */
 
