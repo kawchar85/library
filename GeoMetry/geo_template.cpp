@@ -58,6 +58,17 @@ ostream& operator<<(ostream& os, EQN E) {
     return os << "("<<E.a << "," << E.b <<","<<E.c<<")";
 }
 
+int quad(PT p)
+{
+  if(p.x< 0 && p.y < 0) return 0;
+  if (p.x >= 0 && p.y < 0) return 1;
+  if (p.x >= 0 && p.y >= 0) return 2;
+  if (p.x < 0 && p.y >= 0) return 3;
+}
+
+bool cmp(PT a, PT b){ //compare by angle
+  return quad(a) == quad(b) ? a.x * b.y > a.y * b.x : quad(a) < quad(b);
+};
 bool operator<(PT p1, PT p2){
     if(fabs(p1.x-p2.x)<EPS)
         return p1.y<p2.y;
