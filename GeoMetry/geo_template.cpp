@@ -308,6 +308,28 @@ bool pointInPolygon(vector<PT> &p, PT k)
     int c=orientation(p[r],p[l],k);
     return c>0;
 }
+//O(n)
+int pointInSimplePolygon(vector<PT> &p, PT k)
+{
+    int n=(int)p.size();
+    int cnt=0,i,j;
+    bool boundary=0;
+
+    for(i=0; i<n; i++)
+    {
+        j=(i+1)%n;
+        if(onSegment(p[i], k, p[j]))
+            boundary=1;
+        if(p[i].x<=k.x && k.x<p[j].x && orientation(k,p[i],p[j])==1)
+            cnt++;
+        else if(p[j].x<=k.x && k.x<p[i].x && orientation(k,p[j],p[i])==1)
+            cnt++;
+    }
+
+    if(boundary) return 0;
+    if(cnt&1) return -1;//inside
+    else return 1;//outside
+}
 bool polyInPoly(vector<PT> &p, vector<PT> &q)
 {
     bool ok=1;
