@@ -65,10 +65,10 @@ ll call(int pos, int smallA, int bigA, int smallB, int bigB)
     if(~DP[pos][smallA][bigA][smallB][bigB]) return DP[pos][smallA][bigA][smallB][bigB];
  
     ll res = 0;
-    int startA = smallA? 0 : A[pos];
-    int stopA = bigA? 1 : B[pos];
-    int startB = smallB? 0 : A[pos];
-    int stopB = bigB? 1 : B[pos];
+    int startA = bigA? 0 : A[pos];
+    int stopA = smallA? 1 : B[pos];
+    int startB = bigB? 0 : A[pos];
+    int stopB = smallB? 1 : B[pos];
  
     for(int i= startA; i<=stopB; i++)
     {
