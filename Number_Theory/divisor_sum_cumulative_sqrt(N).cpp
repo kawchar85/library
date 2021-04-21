@@ -14,6 +14,28 @@ ll CSOD(ll n)
     }
     return ans;
 }
+ll CSOD(ll l, ll r)
+{
+    return CSOD(r)-CSOD(l-1);
+}
+
+//another way
+ll get(ll n){
+    return (n*(n+1))/2LL;
+}
+//O(sqrt(N)
+ll SOD_1_N(ll n)
+{
+    ll r,sum=0;
+    for(ll i=1; i<=n; i++)
+    {
+        r=n/(n/i);
+        sum+=(get(r)-get(i-1))*(n/i);
+        i=r;
+    }
+    return sum;
+}
+
 ll SOD(ll n)
 {
     return CSOD(n)-CSOD(n-1);
