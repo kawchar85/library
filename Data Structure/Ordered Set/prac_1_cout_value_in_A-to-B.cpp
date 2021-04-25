@@ -54,6 +54,13 @@ void solve()
             auto it = s.find_by_order(x);
             s.erase(it);
             
+            //Another way
+            /*
+                auto it = s.upper_bound(arr[a]);
+                s.erase(it);
+                //multiset er jonno upper_bound-->lower_bound hisebe kaj kore.
+            */
+            
             arr[a]=b;
             s.insert(arr[a]);
         }
