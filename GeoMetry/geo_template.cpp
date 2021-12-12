@@ -6,49 +6,57 @@ using namespace std;
 typedef long double T;
 //typedef long long T;
 
+int sign(T x) {return (x>EPS)-(x<-EPS);}
 struct PT{
-	T x,y;
-	PT() {}
-	PT(T x, T y): x(x),y(y) {}
-	
-	PT operator+(PT p) {return {x+p.x, y+p.y};}
-	PT operator-(PT p) {return {x-p.x, y-p.y};}
-	PT operator*(T d) {return {x*d, y*d};}
-	PT operator/(T d) {return {x/d, y/d};}
-	PT operator*(PT p) {return {x*p.x-y*p.y, x*p.y+y*p.x};}
-	PT operator/(PT p) {return {((*this)*p.conj())/(p*p.conj()).x};} 
+    T x,y;
+    PT() {x=0, y=0; }
+    PT(T x, T y): x(x),y(y) {}
+    
+    PT operator+(PT p) {return {x+p.x, y+p.y};}
+    PT operator-(PT p) {return {x-p.x, y-p.y};}
+    PT operator*(T d) {return {x*d, y*d};}
+    PT operator/(T d) {return {x/d, y/d};}
+    PT operator*(PT p) {return {x*p.x-y*p.y, x*p.y+y*p.x};}
+    PT operator/(PT p) {return {((*this)*p.conj())/(p*p.conj()).x};} 
+    bool operator == (PT p) const { return sign(p.x-x)==0 && sign(p.y-y)==0;}
+    bool operator != (PT p) const { return !(*this == p);}
+    bool operator < (PT p) const { return sign(p.x-x) == 0 ? (y<p.y) : (x<p.x);}
+    bool operator > (PT p) const { return sign(p.x-x) == 0 ? y>p.y : x>p.x;}
 
-	T sq() {return x*x + y*y;}
-	T abs() {return sqrt(sq());}
-	PT unit() {return (*this)/abs();}
-	PT conj() {return {x,-y};}
-	PT perp() {return {-y,x};}
-	T angle() {return atan2(y,x);}
+    T sq() {return x*x + y*y;}
+    T abs() {return sqrt(sq());}
+    PT unit() {return (*this)/abs();}
+    PT conj() {return {x,-y};}
+    PT perp() {return {-y,x};}
+    T angle() {return atan2(y,x);}
+    PT truncate(T r) { // returns a vector with norm r and having same direction
+        T k = abs();
+        if (!sign(k)) return *this;
+        r /= k;
+        return PT(x*r, y*r);
+    }
 };
 
 struct EQN{
-	//ax+by=c
-	//direction: PT(b,-a)
-	//position: c
-	T a,b,c;
-	EQN() {}
-	EQN(T a, T b, T c): a(a),b(b),c(c) {}
-	EQN(PT A, PT B){
-		a=B.y-A.y;
-		b=A.x-B.x;
-		c=a*A.x+b*A.y;
-	}
-	EQN(PT p, T slp){
-		a=slp;
-		b=-1;
-		c=slp*p.x-p.y;
-	}
-	T slop(){
-		return -1.0*(a/b);
-	}
-	T val(PT p){
-		return a*p.x+b*p.y-c;
-	}
+    //ax+by=c
+    //direction: PT(b,-a)
+    //position: c
+    T a,b,c;
+    EQN() {}
+    EQN(T a, T b, T c): a(a),b(b),c(c) {}
+    EQN(PT A, PT B){
+        a=B.y-A.y;
+        b=A.x-B.x;
+        c=a*A.x+b*A.y;
+    }
+    EQN(PT p, T slp){
+        a=slp;
+        b=-1;
+        c=slp*p.x-p.y;
+    }
+    T slop(){ return -1.0*(a/b); }
+    T val(PT p){ return a*p.x+b*p.y-c; }
+    int side(PT p){ return sign(val(p)); }
 };
 
 ostream& operator<<(ostream& os, PT p) {
@@ -58,6 +66,7 @@ ostream& operator<<(ostream& os, EQN E) {
     return os << "("<<E.a << "," << E.b <<","<<E.c<<")";
 }
 
+
 int quad(PT p)
 {
   if(p.x< 0 && p.y < 0) return 0;
@@ -66,166 +75,102 @@ int quad(PT p)
   if (p.x < 0 && p.y >= 0) return 3;
 }
 
-bool cmp(PT a, PT b){ //compare by angle
+bool polar_sort(PT a, PT b){ //compare by angle
   return quad(a) == quad(b) ? a.x * b.y > a.y * b.x : quad(a) < quad(b);
 };
-bool operator<(PT p1, PT p2){
-    if(fabs(p1.x-p2.x)<EPS)
-        return p1.y<p2.y;
-    return p1.x<p2.x;
-} 
-int sgn(T x){
-	if(abs(x)<EPS) return 0;
-	if(x<0) return -1; return 1;
-}
 
-T dis(PT a, PT b){
-	return (b-a).abs();
-}
-//perpendicular distance
-T dis(EQN I, PT p){
-	return fabs(I.val(p)/PT(I.a,I.b).abs());
-}
-T dot(PT a, PT b){
-	return a.x*b.x+a.y*b.y;
-}
-T cross(PT a, PT b){
-    return (a.x*b.y-a.y*b.x);
-}
-bool eql(PT a, PT b){
-    return fabs(a.x-b.x)<EPS && fabs(a.y-b.y)<EPS;
-}
-EQN paraEqn(EQN I, PT p){
-	T x=I.a*p.x+I.b*p.y;
-	I.c=x;
-	return I;
-}
-EQN perpEqn(EQN I, PT p){
-	swap(I.a,I.b);
-	if(I.a<0) I.a*=-1.0;
-	else I.b*=-1.0;
-	I.c=I.a*p.x+I.b*p.y;
-	return I;
-}
-
+T dot(PT a, PT b){ return a.x*b.x+a.y*b.y; }
+T cross(PT a, PT b){ return (a.x*b.y-a.y*b.x); }
+T dis(PT a, PT b){ return (b-a).abs(); }
+T dis2(PT a, PT b){ return dot(b-a, b-a); }
+T dis(EQN I, PT p){ return fabs(I.val(p)/PT(I.a,I.b).abs()); }
 //between vector A,B
-T angle(PT a, PT b){
-	T cosTheta=dot(a,b)/a.abs()/b.abs();
-	return acos(max((T)-1.0,min((T)1.0,cosTheta)));
-}
+T angle(PT a, PT b){ T cosTheta=dot(a,b)/a.abs()/b.abs();
+    return acos(max((T)-1.0,min((T)1.0,cosTheta))); }
 //betwen point B,A,C
-T angle(PT b, PT a, PT c){
-	return angle(b-a, c-a);
+T angle(PT b, PT a, PT c){ return angle(b-a, c-a); }
+//p lies in above/down of [AB]?
+// bisector vector of <abc
+PT angle_bisector(PT &a, PT &b, PT &c){
+    PT p = a - b, q = c - b;
+    return p + q * sqrt(dot(p, p) / dot(q, q));
 }
-T toRadian(T x){
-	return PI*x/180.0;
-}
-T toDegree(T x){
-	return 180.0/PI*x;
-}
-PT mid(PT a, PT b){
-	return {(a.x+b.x)/2, (a.y+b.y)/2};
-}
-
+bool inSegArea(PT a, PT p, PT b){ return angle(p,a,b)<=(PI/2.0) && angle(p,b,a)<=(PI/2.0); }
+T toRadian(T x){ return PI*x/180.0; }
+T toDegree(T x){ return 180.0/PI*x; }
+PT mid(PT a, PT b){ return {(a.x+b.x)/2, (a.y+b.y)/2}; }
 //get point from polar co-ordi
-PT pol(T r, T radian){ 
-	return {(T)(r*cos(radian)),(T)(r*sin(radian))};
-}
+PT pol(T r, T radian){ return {(T)(r*cos(radian)),(T)(r*sin(radian))}; }
 //AB line borabor d durotte bindhu
-PT ab_to_d(PT a,PT b, T d){
-    return a+(b-a).unit()*d;
-}
+PT ab_to_d(PT a,PT b, T d){ return a+(b-a).unit()*d; }
 //Line I er A point teke d dist a point
-PT walk(EQN I, PT A, T d){
-	return ab_to_d(A,PT(I.b,-I.a),-d);
+PT walk(EQN I, PT A, T d){ return ab_to_d(A,PT(I.b,-I.a),-d); }
+//Projection of a onto b
+T proj(PT a, PT b){ return dot(a,b)/b.abs(); }
+//P teke line l er upor projection
+PT proj(EQN l, PT p){ PT temp={l.a,l.b}; return p-temp*l.val(p)/temp.sq(); }
+PT refl(EQN l, PT p){ PT temp={l.a,l.b}; return p-temp*2.0*l.val(p)/temp.sq(); }
+//translate p by a vector V
+PT translate(PT v, PT p){ return p+v; }
+PT scale(PT c, T factor, PT p){ return c+(p-c)*factor; }
+PT rotate(PT A, T radian){ return A*pol(1.0, radian); }
+//O er sapekke A ke radian kune CCW
+PT rotate(PT O, PT A, T radian){ return O+(A-O)*pol(1.0, radian); }
+PT CCW90(PT p){ return {-p.y,p.x}; }
+PT CW90(PT p){ return {p.y,-p.x}; }
+PT CCW90(PT o,PT p){ p=p-o; return o+PT(-p.y,p.x); }
+PT CW90(PT o,PT p){ p=p-o; return o+PT(p.y,-p.x); }
+//co-linear-->0,CCW-->1,CW-->-1
+int orientation(PT A, PT B, PT C) { return sign( cross(B-A, C-B) ); }
+
+//P lies in the angle formed by lines AB and AC ?
+bool inAngle(PT a, PT b, PT c, PT p) {
+    assert(orientation(a,b,c) != 0);
+    if(orientation(a,b,c)<0) swap(b,c);
+    return orientation(a,b,p) >= 0 && orientation(a,c,p) <= 0;
 }
+//P lies on the disk of diameter [AB]?
+bool inDisk(PT a, PT p,PT b){ return dot(a-p, b-p)<=0.0; }
+//p on segment [AB]?
+bool onSegment(PT a, PT p, PT b){ return orientation(a,p,b)==0 && inDisk(a,p,b); }
+//q on segment pr ??
+bool onSegment2(PT p,PT q,PT  r){ return (q.x<=max(p.x,r.x) && q.x>=min(p.x,r.x) && q.y<=max(p.y,r.y) && q.y>=min(p.y,r.y)); }
+
+// 0 if not parallel, 1 if parallel, 2 if collinear
+int is_parallel(PT a, PT b, PT c, PT d){
+    int k = sign((cross(b - a, d - c)));
+    if (!k){
+        if (!sign(cross(a - b, a - c)) && !sign(cross(c - d, c - a)) ) return 2;
+        else return 1;
+    }
+    else return 0;
+}
+bool is_parallel(EQN one, EQN two){ return !sign(one.a*two.b)-(two.a*one.b); }
+
+EQN paraEqn(EQN I, PT p){
+    T x=I.a*p.x+I.b*p.y;
+    I.c=x; return I; }
+EQN perpEqn(EQN I, PT p){
+    swap(I.a,I.b);
+    if(I.a<0) I.a*=-1.0;
+    else I.b*=-1.0;
+    I.c=I.a*p.x+I.b*p.y;
+    return I; }
+
 //duita equation solve/ Ax+By=C
 PT solve_eqn(EQN one, EQN two)
 {
     PT ans;
     T d=(one.a*two.b)-(two.a*one.b);
     if(fabs(d)<EPS){
-    	cout<<"Parallel!!!"<<endl;
-    	return {0,0};
+        cout<<"Parallel!!!"<<endl;
+        return {0,0};
     }
     ans.x=(two.b*one.c-one.b*two.c)/d;
     ans.y=(one.a*two.c-two.a*one.c)/d;
     return ans;
 }
-//Projection of a onto b
-T proj(PT a, PT b){
-	return dot(a,b)/b.abs();
-}
-//P teke line l er upor projection
-PT proj(EQN l, PT p){
-	PT temp={l.a,l.b};
-	return p-temp*l.val(p)/temp.sq();
-}
-PT refl(EQN l, PT p){
-	PT temp={l.a,l.b};
-	return p-temp*2.0*l.val(p)/temp.sq();
-}
-//translate p by a vector V
-PT translate(PT v, PT p){
-	return p+v;
-}
-PT scale(PT c, T factor, PT p){
-	return c+(p-c)*factor;
-}
-PT rotate(PT A, T radian){
-	return A*pol(1.0, radian);
-}
-//O er sapekke A ke radian kune CCW
-PT rotate(PT O, PT A, T radian){
-	return O+(A-O)*pol(1.0, radian);
-}
-PT CCW90(PT p){
-	return {-p.y,p.x};
-}
-PT CW90(PT p){
-	return {p.y,-p.x};
-}
-PT CCW90(PT o,PT p){
-    p=p-o;
-    return o+PT(-p.y,p.x);
-}
-PT CW90(PT o,PT p){
-    p=p-o;
-    return o+PT(p.y,-p.x);
-}
-//co-linear-->0
-//CCW-->1
-//CW-->-1
-int orientation(PT A, PT B, PT C) {
-    T x=cross(B-A, C-B); //ABxBC
-    if(fabs(x)<EPS)
-        return 0;
-    if(x>0)
-        return 1;
-    return -1;
-}
 
-//P lies in the angle formed by lines AB and AC ?
-bool inAngle(PT a, PT b, PT c, PT p) {
-	assert(orientation(a,b,c) != 0);
-	if(orientation(a,b,c)<0) swap(b,c);
-	return orientation(a,b,p) >= 0 && orientation(a,c,p) <= 0;
-}
-//P lies on the disk of diameter [AB]?
-bool inDisk(PT a, PT p,PT b){
-	return dot(a-p, b-p)<=0.0;
-}
-//p on segment [AB]?
-bool onSegment(PT a, PT p, PT b){
-	return orientation(a,p,b)==0 && inDisk(a,p,b);
-}
-//q on segment pr ??
-bool onSegment2(PT p,PT q,PT  r)
-{
-    if(q.x<=max(p.x,r.x) && q.x>=min(p.x,r.x) && q.y<=max(p.y,r.y) && q.y>=min(p.y,r.y))
-       return 1;
-    return 0;
-}
 //line segment 'p1q1' and 'p2q2' intersect.
 bool segmentIntersect(PT p1,PT q1,PT p2,PT q2)
 {
@@ -256,16 +201,13 @@ T betweenAngle(EQN I, EQN II){
     return atan(x); //or atan(-x)
 }
 
-//p in above/down of [AB]?
-bool inSegArea(PT a, PT p, PT b){
-	return angle(p,a,b)<=(PI/2.0) && angle(p,b,a)<=(PI/2.0);
-}
+
 //min dis of [AB] from p
 T segPoint(PT a, PT b, PT p){
-	T ans=min((p-a).abs(), (p-b).abs());
-	if(inSegArea(a,p,b))
-		ans=min(ans,dis(EQN(a,b),p));
-	return ans;
+    T ans=min((p-a).abs(), (p-b).abs());
+    if(inSegArea(a,p,b))
+        ans=min(ans,dis(EQN(a,b),p));
+    return ans;
 }
 //min dis of[AB) from p
 T rayPoint(PT a, PT b, PT p){
@@ -274,15 +216,15 @@ T rayPoint(PT a, PT b, PT p){
 }
 //min dis [AB] [CD]
 T segSeg(PT a, PT b, PT c, PT d){
-	if(segmentIntersect(a,b,c,d))
-		return 0.0;
-	return min({segPoint(a,b,c), segPoint(a,b,d), segPoint(c,d,a), segPoint(c,d,b)});
+    if(segmentIntersect(a,b,c,d))
+        return 0.0;
+    return min({segPoint(a,b,c), segPoint(a,b,d), segPoint(c,d,a), segPoint(c,d,b)});
 }
 T areaPolygon(vector<PT> &p){
-	T area = 0.0;
-	for(int i=0, n=p.size(); i<n; i++)
-		area += cross(p[i], p[(i+1)%n]);
-	return abs(area)/2.0;
+    T area = 0.0;
+    for(int i=0, n=p.size(); i<n; i++)
+        area += cross(p[i], p[(i+1)%n]);
+    return fabs(area)/2.0;
 }
 //for convex poly
 bool pointInPolygon(vector<PT> &p, PT k)
@@ -394,12 +336,12 @@ void convex_hull(vector<PT> &v){
 }
 
 bool circleLine(PT o, T r, EQN I,vector<PT> &v){
-	T d=dis(I,o);
-	if(d>r) return 0;
-	T x=sqrt(r*r-d*d);
-	PT p=proj(I,o);
-	v.push_back(walk(I,p,x));
-	v.push_back(walk(I,p,-x));
+    T d=dis(I,o);
+    if(d>r) return 0;
+    T x=sqrt(r*r-d*d);
+    PT p=proj(I,o);
+    v.push_back(walk(I,p,x));
+    v.push_back(walk(I,p,-x));
 }
 bool circleIntersect(PT a,T r0,PT b,T r1, set<PT> &v)
 {
@@ -428,7 +370,7 @@ bool circleIntersect(PT a,T r0,PT b,T r1, set<PT> &v)
     vector<PT> v2;
     circleLine(a,r0,I, v2);
     for(auto p : v2)
-    	v.insert(p);
+        v.insert(p);
     return 1;
 }
 
@@ -463,6 +405,8 @@ T perp_slop(PT p){
 int main()
 {
     ios_base::sync_with_stdio(false); cin.tie(NULL);
-	//freopen("angle1.in","r", stdin);
+    //freopen("angle1.in","r", stdin);
     //freopen("angle1.out","w", stdout);
+    
+
 }
