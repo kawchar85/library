@@ -148,6 +148,19 @@ int is_parallel(PT a, PT b, PT c, PT d){
     else return 0;
 }
 bool is_parallel(EQN one, EQN two){ return !sign(one.a*two.b)-(two.a*one.b); }
+long double diameter_rotating_calipers(vector<PT> &p){ //points of convex hull
+    long double mn=1e100;
+    int n=p.size();
+
+    for(int i=0,k=1; i<n; i++)
+    {
+        int j=(i+1)%n;
+        while(fabs(cross(p[j]-p[i] , p[(k+1)%n]-p[i]))>fabs(cross(p[j]-p[i] , p[k]-p[i])))
+            k=(k+1)%n;
+        mn=min(mn, dis(p[k], p[i],p[j]));
+    }
+    return mn;
+}
 
 EQN paraEqn(EQN I, PT p){
     T x=I.a*p.x+I.b*p.y;
