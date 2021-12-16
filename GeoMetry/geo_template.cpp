@@ -84,6 +84,8 @@ T cross(PT a, PT b){ return (a.x*b.y-a.y*b.x); }
 T dis(PT a, PT b){ return (b-a).abs(); }
 T dis2(PT a, PT b){ return dot(b-a, b-a); }
 T dis(EQN I, PT p){ return fabs(I.val(p)/PT(I.a,I.b).abs()); }
+//distance from p to line (a,b)
+long double dis(PT p, PT a, PT b){ return fabs(cross(b-a, p-a)/(b-a).abs()); }
 //between vector A,B
 T angle(PT a, PT b){ T cosTheta=dot(a,b)/a.abs()/b.abs();
     return acos(max((T)-1.0,min((T)1.0,cosTheta))); }
