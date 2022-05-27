@@ -43,6 +43,9 @@ int dijkstra(int s, int d)
         w=q.top().w;
         n=q.top().to;
         q.pop();
+
+        if(cost[n] < w) continue;
+
         for(auto v: adj[n])
         {
             test=w+v.w;
