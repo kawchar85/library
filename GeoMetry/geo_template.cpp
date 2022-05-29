@@ -358,35 +358,17 @@ bool circleLine(PT o, T r, EQN I,vector<PT> &v){
     v.push_back(walk(I,p,x));
     v.push_back(walk(I,p,-x));
 }
-bool circleIntersect(PT a,T r0,PT b,T r1, set<PT> &v)
-{
-    T d,d2,x,y,angle;
-    PT one,two,k,temp;
-    d=dis(a,b);
-    d2=(a-b).sq();
-    if(d>r0+r1 || d<abs(r0-r1))
-    {
-        cout<<"NO INTERSECTION\n";
-        return 0;
-    }
-    if(fabs(r0)<EPS && fabs(r1)<EPS && fabs((a-b).abs())<EPS)
-    {
-        v.insert(a);//point circle
-        return 1;
-    }
-    if(fabs(r0-r1)<EPS && fabs((a-b).abs())<EPS)
-    {
-        cout<<"THE CIRCLES ARE THE SAME\n";
-        return 0;
-    }
-    
-    x=r1*r1-r0*r0-b.y*b.y-b.x*b.x;
-    EQN I=EQN(-2.0*b.x, -2.0*b.y, x);
-    vector<PT> v2;
-    circleLine(a,r0,I, v2);
-    for(auto p : v2)
-        v.insert(p);
-    return 1;
+vector<PT> circle_circle_intersection(PT a, T r, PT b, T R) {
+    if (a == b && sign(r - R) == 0) return {PT(1e18, 1e18)};
+    vector<PT> ret;
+    T d = dis(a,  b);
+    if (d > r + R || d + min(r,  R) < max(r,  R)) return ret;
+    T x = (d * d - R * R + r * r) / (2 * d);
+    T y = sqrt(r * r - x * x);
+    PT v = (b - a) / d;
+    ret.push_back(a + v * x  +  CCW90(v) * y);
+    if (y > 0) ret.push_back(a + v * x - CCW90(v) * y);
+    return ret;
 }
 
 /*
