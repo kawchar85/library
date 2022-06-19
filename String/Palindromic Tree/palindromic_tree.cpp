@@ -1,3 +1,7 @@
+/**
+Resource: https://rezwanarefin01.github.io/posts/palindromic-tree-01/
+*/
+
 #include<bits/stdc++.h>
 using namespace std;
 
