@@ -357,6 +357,7 @@ bool circleLine(PT o, T r, EQN I,vector<PT> &v){
     PT p=proj(I,o);
     v.push_back(walk(I,p,x));
     v.push_back(walk(I,p,-x));
+    return 1;
 }
 vector<PT> circle_circle_intersection(PT a, T r, PT b, T R) {
     if (a == b && sign(r - R) == 0) return {PT(1e18, 1e18)};
