@@ -14,7 +14,11 @@ using namespace std;
 #define last1cng(n) (n)&((n)-1)
 #define last0cng(n) ~(last1cng(~(n)))
 
-
+//all the subsets of the mask
+void subSet(ll mask){
+  for(ll i = mask; i>0; i = (i-1)&mask)
+    cout<<bitset<8>(i)<<endl;
+}
 int And(int L, int R)
 {
     //L&(L+1)&(L+2)&....&(R-1)&R
