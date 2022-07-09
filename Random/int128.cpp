@@ -1,6 +1,8 @@
 #include<bits/stdc++.h>
 #define ull __int128
-
+//they are fast
+#define getchar _getchar_nolock
+#define putchar _putchar_nolock
 ull read()
 {
     ull x = 0, f = 1;
