@@ -8,10 +8,10 @@ void solve(int l, int r, int ql, int qr) {
   if(l > r) return;
   int mid = l + (r - l) / 2;
   
-  ll pos =0, val = INT_MAX;
+  ll pos =0, val = INT_MAX; //check min or max ?
   for(int k = ql; k <= min(mid, qr); k++) {
     ll ret = cost(k, mid);
-    if(ret < val) val = ret, pos = k;
+    if(ret < val) val = ret, pos = k; // min or max?
   }
 
   dp[mid] = val;
