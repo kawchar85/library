@@ -1,8 +1,8 @@
 #include<bits/stdc++.h>
-#define sz 500
+#define MAX 500
 using namespace std;
 
-int inv[sz];
+int inv[MAX];
 
 ///O(m) m must be prime
 void inverse(int m)

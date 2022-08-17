@@ -1,11 +1,11 @@
 /**
     Given a sequence of integers 
     a1,a2,...,an and q queries 
-    x1,x2..., xq on it. For each
+    x1,x2..., xq on it. For each
     query xi you have to count 
-    the number of pairs (l, r) 
-    such that 1 ≤ l ≤ r ≤ n and
-    gcd(al, al+1, ..., ar)= xi.
+    the number of pairs (l, r) 
+    such that 1 ≤ l ≤ r ≤ n and
+    gcd(al, al+1, ..., ar)= xi.
 */
 #include <bits/stdc++.h>
 
