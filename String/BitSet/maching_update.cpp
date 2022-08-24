@@ -26,7 +26,7 @@ void computeMask(string &text)
 //O(N*N/64)
 int StringMatchingInRange(string &pattern, string &text, ll l, ll r)
 {
-    if((int)pattern.size() > (r-l+1))
+    if(((int)pattern.size() - 1 )> (r-l+1))
         return 0;
 
     //computeMask(text);
