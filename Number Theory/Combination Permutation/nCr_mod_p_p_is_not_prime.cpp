@@ -1,210 +1,132 @@
-/**
-https://turing13.wordpress.com/2017/05/22/ncrm-when-m-is-not-prime-and-n-and-r-is-sufficiently-large/
-*/
+//https://www.hackerrank.com/challenges/ncr/problem
+
 #include <bits/stdc++.h>
 using namespace std;
-#define MAX 1000006
+#define endl "\n"
+#define FAST ios_base::sync_with_stdio(false); cin.tie(NULL);
+#define ll long long 
+#define MAX 142857
 #define MOD 1000000007
-#define pb push_back
-typedef long long ll;
 
-vector<pair<ll,ll> >factor;
-ll factorial[MAX];
-ll arr[MAX];
-vector<ll>ans;
-bool siv[MAX];
-vector<ll>prime;
+const int N = 142858; //need primes <=M (nCr%M)
+int spf[N];
+vector<int> primes;
 
-///O(n*lg(lg(n)))
-void sieve()
-{
-    ll i,j;
-    for(i=3; i*i<MAX; i+=2)
-        if(!siv[i])
-            for(j=i*i; j<MAX; j+=i+i)
-                siv[j]=1;
-    prime.pb(2);
-    for(i=3; i<MAX; i+=2)
-        if(!siv[i]) prime.pb(i);
+void sieve(){
+  for(int i = 2; i < N; i++){
+    if(spf[i] == 0) spf[i] = i, primes.push_back(i);
+    int sz = primes.size();
+    for(int j = 0; j < sz && i * primes[j] < N && primes[j] <= spf[i]; j++)
+      spf[i * primes[j]] = primes[j];
+  }
 }
 
-
-
-void precal(ll p, ll q, ll mod)
-{
-    arr[0]=1;
-    arr[1]=1;
-    ll x=1;
-    for(ll i=2; i<=mod; i++)
-    {
-        if(i%p)
-            x=i;
-        else
-            x=1;
-        arr[i]=(arr[i-1]*x)%mod;
-    }
+int BigMod(ll n, ll k, const int mod){
+  int ans = 1 % mod; n %= mod; if(n < 0) n += mod;
+  while(k){
+    if(k & 1) ans = (1LL * ans * n) % mod;
+    n = n * n % mod;
+    k >>= 1;
+  }
+  return ans;
 }
 
-ll bigmod(ll n, ll p, ll mod)
-{
-    ll ret=1;
-    while(p)
-    {
-        if(p&1)
-            ret=(ret*n)%mod;
-        n=(n*n)%mod;
-        p/=2;
-    }
-    return ret;
+ll e_gcd(ll a, ll b, ll &x, ll &y){
+  if(b == 0){
+    x = 1; y = 0;
+    return a;
+  }
+  ll x1, y1;
+  ll d = e_gcd(b, a % b, x1, y1);
+  x = y1;
+  y = x1 - y1 * (a / b);
+  return d;
 }
 
-ll E(ll n, ll p)
-{
-    ll ret=0;
-    while(n)
-    {
-        ret+=n/p;
-        n=n/p;
-    }
-    return ret;
+ll inverse(ll a, ll m){
+  ll x, y;
+  ll g = e_gcd(a, m, x, y);
+  if (g != 1) return -1;
+  return (x % m + m) % m;
 }
 
-ll f(ll n, ll mod)
-{
-    ll ret=bigmod(arr[mod-1],n/mod,mod)*arr[n%mod];
-    return ret;
+// returns n! % mod without taking all the multiple factors of p into account that appear in the factorial
+// mod = multiple of p
+// O(mod * log(n))
+int factmod(ll n, int p, const int mod){
+  vector<int> f(mod + 1);
+  f[0] = 1 % mod;
+  for(int i = 1; i <= mod; i++){
+    if (i % p) f[i] = 1LL * f[i - 1] * i % mod;
+    else f[i] = f[i - 1];
+  }
+  int ans = 1 % mod;
+  while (n > 1) {
+    ans = 1LL * ans * f[n % mod] % mod;
+    ans = 1LL * ans * BigMod(f[mod], n / mod, mod) % mod;
+    n /= p;
+  }
+  return ans; 
+}
+ll multiplicity(ll n, int p){
+  ll ans = 0;
+  while (n) {
+    n /= p;
+    ans += n;
+  }
+  return ans;
 }
 
-ll F(ll n, ll mod, ll p)
-{
-    ll ret=1;
-    ll i=1;
-    while(i<=n)
-    {
-        ret=(ret*f(n/i,mod))%mod;
-        i=i*p;
-    }
-    return ret;
+// C(n, r) modulo p^k
+// O(p^k log n)
+int ncr(ll n, ll r, int p, int k){
+  if(n < r || r < 0) return 0;
+  int mod = 1;
+  for (int i = 0; i < k; i++) {
+    mod *= p;
+  }
+  ll t = multiplicity(n, p) - multiplicity(r, p) - multiplicity(n - r, p);
+  if(t >= k) return 0;
+  int ans = 1LL * factmod(n, p, mod) * inverse(factmod(r, p, mod), mod) % mod * inverse(factmod(n - r, p, mod), mod) % mod;
+  ans = 1LL * ans * BigMod(p, t, mod) % mod;
+  return ans;
+}
+pair<ll, ll> CRT(ll a1, ll m1, ll a2, ll m2) {
+  ll p, q;
+  ll g = e_gcd(m1, m2, p, q);
+  if(a1 % g != a2 % g) return make_pair(0, -1);
+  ll m = m1 / g * m2;
+  p = (p % m + m) % m;
+  q = (q % m + m) % m;
+  return make_pair((p * a2 % m * (m1 / g) % m + q * a1 % m * (m2 / g) % m) %  m, m);
 }
 
-ll inv(ll a, ll m) // Calculating Modular Multiplicative Inverse
-{
-    ll m0 = m, t, q;
-    ll x0 = 0, x1 = 1;
-
-    if (m == 1)
-        return 0;
-
-//     Apply extended Euclid Algorithm
-    while (a > 1)
-    {
-        q = a / m;
-        t = m;
-        m = a % m, a = t;
-        t = x0;
-        x0 = x1 - q * x0;
-        x1 = t;
+// O(m log(n) log(m))
+int ncr(ll n, ll r, int m) {
+  if(n < r || r < 0) return 0;
+  pair<ll, ll> ans({0, 1});
+  while (m > 1) {
+    int p = spf[m], k = 0, cur = 1;
+    while (m % p == 0) {
+      m /= p; cur *= p;
+      ++k;
     }
-    if (x1 < 0)
-        x1 += m0;
-
-    return x1;
+    ans = CRT(ans.first, ans.second, ncr(n, r, p, k), cur);
+  }
+  return ans.first;
 }
 
+int32_t main() {
+  FAST
+  sieve();
 
-
-
-ll nCr(ll n, ll r, ll p, ll mod)
-{
-    ll e=E(n,p)-E(r,p)-E(n-r,p);
-    ll mod1=F(n,mod,p);
-    ll mod2=(F(r,mod,p)*F(n-r,mod,p))%mod;
-    mod2=inv(mod2,mod);
-    ll ret=bigmod(p,e,mod);
-    ret*=mod1;
-    ret%=mod;
-    ret*=mod2;
-    ret%=mod;
-    return ret;
-}
-
-ll findMinX(int k) // Chinese Remainder
-{
-    ll prod = 1;
-    vector<ll>num;
-    for(ll i=0; i<k; i++)
-    {
-        num.pb(bigmod(factor[i].first,factor[i].second,MOD));
-    }
-    for (ll i = 0; i < k; i++)
-        prod *= num[i];
-
-    ll result = 0;
-
-    for (ll i = 0; i < k; i++)
-    {
-        ll pp = prod / num[i];
-        result += ans[i] * inv(pp, num[i]) * pp;
-    }
-
-    return result % prod;
-}
-
-ll nCr_mod_m(ll n, ll r, ll m)
-{
-    factor.clear();
-    ans.clear();
-    ll root=sqrt(m);
-    ll mm=m;
-    for(ll i=0; i<prime.size() && prime[i]<=root; i++)
-    {
-        if(mm%prime[i]==0)
-        {
-            ll cnt=0;
-            while(mm%prime[i]==0)
-            {
-                mm/=prime[i];
-                cnt++;
-            }
-            factor.pb(make_pair(prime[i],cnt));
-            root=sqrt(mm);
-        }
-    }
-
-    if(mm>1)
-        factor.pb(make_pair(mm,1));
-
-
-
-    for(ll i=0; i<factor.size(); i++)
-    {
-        ll p=factor[i].first;
-
-        ll num=bigmod(p,factor[i].second,MOD);
-        precal(p,factor[i].second,num);
-        ans.pb(nCr(n,r,p,num));
-    }
-
-    ll anss=findMinX(factor.size());
-    return anss;
-}
-
-int main()
-{
-    sieve();
-
-    ll t;
-    cin>>t;
-    while(t--)
-    {
-        ll n,r,m;
-        cin>>n>>r>>m;
-
-        ll ans=nCr_mod_m(n,r,m);
-        if(r>n) ans=0;
-
-        printf("%lld C %lld mod %lld = %lld\n",n,r,m,ans);
-    }
-
-    return 0;
+  int t; 
+  cin >> t;
+  while(t--){
+    ll n, r, m; 
+    cin >> n >> r;
+    m = 142857;
+    cout << ncr(n, r, m) << endl;
+  }
+  return 0;
 }
