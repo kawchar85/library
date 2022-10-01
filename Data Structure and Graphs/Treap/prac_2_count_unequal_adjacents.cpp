@@ -73,14 +73,23 @@ pair<int,int> split(int t, int key){
         ret = split(r, key - (~l ? tree[l].sz : 0) - 1);
         tree[t].r = ret.first;
         ret.first = t;
-        calibrate(t);
     }else{
         ret = split(l, key);
         tree[t].l = ret.second;
         ret.second = t;
-        calibrate(t);
     }
+    calibrate(t);
     return ret;
+}
+//v[0] = [1, l-1], v[1] = [l, r], v[2] = [r+1, N]
+vector<int> parts(int l, int r){
+    vector<int> v(3);
+    auto cur = split(treap, l - 1);
+    v[0] = cur.first;
+    cur = split(cur.second, r - l + 1);
+    v[1] = cur.first;
+    v[2] = cur.second;
+    return v;
 }
 int merge(int a,int b){
     //propagate(a); propagate(b);
@@ -95,33 +104,22 @@ int merge(int a,int b){
         return b;
     }
 }
-
+int merge(int a, int b, int c){
+    return merge(merge(a, b), c);
+}
 int query(int l, int r){
-    int a, b, c;
-    auto cur = split(treap, l - 1);
-    a = cur.first;
-    cur = split(cur.second, r - l + 1);
-    b = cur.first;
-    c = cur.second;
-    int ret = tree[b].cnt;
-    a = merge(a, b);
-    a = merge(a, c);
-    treap = a;
+    auto p = parts(l, r);
+    int ret = tree[ p[1] ].cnt;
+    treap = merge(p[0], p[1], p[2]);
 
     return ret ;
 }
 
 void move_to_beg(int l, int r){
-    int a, b, c;
-    auto cur = split(treap, l - 1);
-    a = cur.first;
-    cur = split(cur.second, r - l + 1);
-    b = cur.first;
-    c = cur.second;
-    a = merge(b, a);
-    a = merge(a, c);
-    treap = a;
+    auto p = parts(l, r);
+    treap = merge(p[1], p[0], p[2]);
 }
+
 void push_back(int val){
     treap = merge(treap, get_node(val));
 }
