@@ -2,44 +2,43 @@
 using namespace std;
 #define ll long long 
 
+
+
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
 
-/*
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
-struct chash{
-    int operator()(int x) const { return x ^ RANDOM; }
-};*/
-//gp_hash_table<key, int, chash> table;
-
-const ll TIME = chrono::high_resolution_clock::now().time_since_epoch().count();
-const ll SEED = (ll)(new ll);
-const ll RANDOM = TIME ^ SEED;
-const ll MOD = (int)1e9+7;
-const ll MUL = (int)1e6+3;
- struct chash{
-    ll operator()(ll x) const { return std::hash<ll>{}((x ^ RANDOM) % MOD * MUL); }
-};
-gp_hash_table<ll, ll, chash> table;
-
-/*
 struct chash {
-    int operator()(pii x) const { return x.first* 31 + x.second; }
+    // any random-ish large odd number will do
+    const uint64_t C = 2713661325311;
+    const uint32_t RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+    size_t operator()(uint64_t x) const {
+        return __builtin_bswap64((x ^ RANDOM) * C);
+    }
+    size_t operator()(pair<uint64_t, uint64_t> x) const { 
+        return x.first* 31 + x.second;
+        //return __builtin_bswap64(((x.first* 31 + x.second) ^ RANDOM) * C);
+    }
 };
-gp_hash_table<pii, int, chash> table;
-*/
+gp_hash_table<int,int, chash> freq;
+gp_hash_table<ll, ll, chash> table;
+gp_hash_table< pair<int,int>, ll, chash > test;
 
-int main()
-{
-    int n,i,x;
-    n=10;
+int main() {
+    int n, i, x;
+    n = 12;
 
-    for(i=0; i<=n; i++)
-        table[i]=pow(10,i);
+    for(i = 0; i <= n; i++)
+        table[i] = pow(10, i);
 
-    for(i=0; i<=n; i++)
-        cout<<i<<" "<<table[i]<<endl;
+    for(i = 0; i <= n; i++)
+        cout << i << " " << table[i] << endl;
+
+    for(i = 0; i <= n; i++)
+        test[{i, i}] = pow(10, i);
+
+    for(i = 0; i <= n; i++)
+        cout << "{" << i << "," << i << "} " << test[{i,i}] << endl;
+
 
     return 0;
 }
