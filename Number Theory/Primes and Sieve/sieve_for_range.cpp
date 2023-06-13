@@ -1,6 +1,5 @@
 #include<bits/stdc++.h>
 #define ll long long
-#define pb push_back
 #define MAX 10006
 using namespace std;
 
@@ -15,9 +14,9 @@ void sieve(ll n)
         if(!siv[i])
             for(j=i*i; j<n; j+=i+i)
                 siv[j]=1;
-    prime.pb(2);
+    prime.push_back(2);
     for(i=3; i<n; i+=2)
-        if(!siv[i]) prime.pb(i);
+        if(!siv[i]) prime.push_back(i);
 }
 
 void PrimeRange(ll low, ll high)

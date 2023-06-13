@@ -1,6 +1,5 @@
 #include<bits/stdc++.h>
 #define ll long long
-#define pb push_back
 #define MAX 1004
 using namespace std;
 
@@ -16,12 +15,12 @@ void sieve()
         if(!siv[i])
             for(j=i*i; j<MAX; j+=i+i)
                 siv[j]=1;
-    prime.pb(2);
+    prime.push_back(2);
     isPrime[2]=1;
     isPrimeSq[2*2]=1;
     for(i=3; i<MAX; i+=2){
         if(!siv[i]){
-            prime.pb(i);
+            prime.push_back(i);
             isPrime[i]=1;
             isPrimeSq[i*i]=1;
         }

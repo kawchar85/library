@@ -1,21 +1,18 @@
 #include<bits/stdc++.h>
-#define SZ 100005
+#define MAX 100005
 #define ll long long
 using namespace std;
 
-ll sod[SZ];
+ll sod[MAX];
 //O(NLogN)
-void SOD()
-{
-    for(int i=1; i<SZ; i++)
-    {
-        for(int j=i; j<SZ; j+=i)
-        {
-           sod[j]+=i;
+void SOD() {
+    for(int i = 1; i < MAX; i++) {
+        for(int j = i; j < MAX; j += i) {
+           sod[j] += i;
         }
     }
 }
-int main()
-{
+
+int main(){
 
 }

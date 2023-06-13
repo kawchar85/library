@@ -1,6 +1,5 @@
 #include<bits/stdc++.h>
 #define ll long long
-#define pb push_back
 #define MAX 1000006
 using namespace std;
 
