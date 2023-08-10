@@ -1,41 +1,42 @@
 #include<bits/stdc++.h>
 using namespace std;
-#define MAX 10004
 
-int parent[MAX],Size[MAX];
+#define MAX 200005
 
-void make_set(int v)
-{
-    parent[v]=v;
-    Size[v]=1;
-}
+int par[MAX],sz[MAX];
 
-int find_set(int v)
-{
-    if(parent[v]==v)
-        return v;
-    return parent[v]=find_set(parent[v]);
-}
-
-void union_sets(int a, int b)
-{
-    a=find_set(a);
-    b=find_set(b);
-    if(a!=b)
-    {
-        if(Size[a]<Size[b])
-            swap(a,b);
-        parent[b]=a;
-        Size[a]+=Size[b];
+void init(int n) {
+    for(int i = 0; i <= n; i++) {
+        par[i] = i; sz[i] = 1;
     }
 }
-void init(int n)
-{
-    for(int i=0; i<=n; i++)
-        make_set(i);
+int find(int u) {
+    if(par[u] == u) return u;
+    return par[u] = find(par[u]);
 }
-int main()
-{
+void merge(int u, int v) {
+    u = find(u);
+    v = find(v);
+    if(u == v) return;
+    if(sz[u] < sz[v]) swap(u,v);
+    par[v] = u;
+    sz[u] += sz[v];
+}
 
+int32_t main() {
+    int n, m;
+    cin >> n >> m;
+    init(n);
+    while(m--){
+        int t, x, y;
+        cin >> t >> x >> y;
+        if(t == 1)
+            merge(x, y);
+        else if(find(x) == find(y)) {
+            cout<<"YES"<<endl;
+        } else {
+            cout<<"NO"<<endl;
+        }
+    }
     return 0;
 }
