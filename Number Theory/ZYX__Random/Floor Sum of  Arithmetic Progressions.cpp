@@ -13,6 +13,9 @@ ll sumsq(ll n) {
 }
 // \sum_{i = 0}^{n - 1}{(a + d * i) / m}, O(log m)
 ll floor_sum(ll a, ll d, ll m, ll n) {
+  if(d < 0) { //if d<0, reversing the series
+    a = a + (n - 1) * d; d = -d;
+  }
   ll res = d / m * sumsq(n) + a / m * n;
   d %= m; a %= m;
   if (!d) return res;
