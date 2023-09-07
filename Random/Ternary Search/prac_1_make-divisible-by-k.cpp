@@ -5,18 +5,38 @@ https://toph.co/p/help-chokro
 #include<bits/stdc++.h>
 using namespace std;
 
+#define ALL(v) v.begin(),v.end()
+#define clean(x,y) memset(x,y,sizeof(x));
 #define endl "\n"
 #define FAST ios_base::sync_with_stdio(false); cin.tie(NULL);
+#define MOD 1000000007
+#define MAX 200005
 
 typedef long long ll;
 
+vector<int> v;
+int k;
+
 ll F(int x) {
-    return 100 + x*x;
+    ll sum = 0, tar = 1LL*x*k;
+
+    for(auto val : v) {
+        sum += abs(tar - val);
+    }
+    return sum;
 }
 
-void ternarySearch() {
-    ll mn = INT_MAX;
-    int l = -1000, r = 1000, m1, m2;
+void solve() {
+    int n, x;
+
+    cin >> n >> k;
+    for(int i = 0; i < n; i++) {
+        cin >> x;
+        v.push_back(x);
+    }
+
+    ll mn = -1;
+    int l = 0, r = 1000000, m1, m2;
     while(l <= r) {
         m1 = l + (r - l) / 3;
         m2 = r - (r - l) / 3;
@@ -49,7 +69,7 @@ int32_t main() {
 
     for(int cs = 1; cs <= TC; cs++) {
         //cout << "Case " << cs << ": ";
-        ternarySearch();
+        solve();
     }
 
     return 0;
