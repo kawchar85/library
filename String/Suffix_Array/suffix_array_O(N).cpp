@@ -90,9 +90,8 @@ vector<int> suffix_array(const string &s, const int LIM = 128) {
 struct SuffixArray {
   int n;
   string s;
-  vi sa, rank, lcp;
+  vi sa, rank, lcp, lg;
   vector<vi> t;
-  vi lg;
   SuffixArray() {}
   SuffixArray(string _s) {
     n = _s.size();
@@ -107,7 +106,7 @@ struct SuffixArray {
   void costruct_lcp() {
     //lcp[i] = lcp of suffix started from i and i+1
     int k = 0;
-    lcp.resize(n - 1, 0);
+    lcp.resize(n, 0);
     for (int i = 0; i < n; i++) {
       if (rank[i] == n - 1) {
         k = 0;
@@ -182,7 +181,12 @@ struct SuffixArray {
     }
     return ans;
   }
-
+  long long unique_substring() {
+    long long cnt = 0;
+    for (int i = 0; i < n; i++)
+      cnt += (n - sa[i] - lcp[i]);
+    return cnt;
+  }
 };
 
 int32_t main() {
