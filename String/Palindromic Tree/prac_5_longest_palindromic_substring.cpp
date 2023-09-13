@@ -1,10 +1,11 @@
+//https://cses.fi/problemset/task/1111
 //https://vjudge.net/problem/SPOJ-LPS
 
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long 
 
-const int N = 100005;
+const int N = 1000003;
 const int t_sz= 26;
 
 struct Palindromic_Tree{
@@ -12,24 +13,23 @@ struct Palindromic_Tree{
     int tree[N][t_sz], idx;
     int len[N], link[N], t,n;
     int endHere[N],occ[N],total=0;
+    int stop[N];//right id of pal, need for printing
     string s="#";
 
     Palindromic_Tree(){
         memset(occ, 0, sizeof(occ));
         len[1] = -1, link[1] = 1;
         len[2] = 0, link[2] = 1;
-        endHere[1]=endHere[2]=0;
+        endHere[1] = endHere[2] = 0;
         idx = t = 2;
     }
 
-    void add(int p)
-    {
+    void add(int p){
         while(s[p-len[t]-1] != s[p]) t = link[t];
         int x = link[t], c = s[p] - 'a';
         while(s[p-len[x]-1] != s[p]) x = link[x];
         
-        if(!tree[t][c])
-        {
+        if(!tree[t][c]){
             tree[t][c] = ++idx;
             len[idx] = len[t] + 2;
             link[idx] = len[idx] == 1 ? 2 : tree[x][c];
@@ -38,10 +38,10 @@ struct Palindromic_Tree{
         
         t = tree[t][c];
         occ[t]++;
+        stop[t] = p;
     }
 
-    void init(string &ss)
-    {
+    void init(string &ss){
         s+=ss;
         n=(int)s.size();
         
@@ -63,8 +63,7 @@ struct Palindromic_Tree{
     }
     
     void clear(){
-        for(int i=0; i<=idx; i++)
-        {
+        for(int i=0; i<=idx; i++){
             occ[i]=endHere[i]=len[i]=link[i]=0;
             for(int j=0; j<t_sz; j++)
                 tree[i][j]=0;
@@ -83,26 +82,29 @@ struct Palindromic_Tree{
     int cntTotal(){
         return total;
     }
-    ll LPS(){
-        ll mx=1;
-        for(int i=3; i<=idx; i++)
+    string LPS(){
+        ll mx = 0, id = -1;
+        for(int i = 3; i <= idx; i++) {
             mx=max(mx, (ll)len[i]);
-        return mx;
+            if(len[i] >= mx) {
+                mx = len[i];
+                id = i;
+            }
+        }
+
+        int r = stop[id], l = stop[id] - len[id] + 1;
+        return s.substr(l, len[id]);
     }
 };
 
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(false); cin.tie(NULL);
 
-    string s;
+    string s; cin >> s;
     Palindromic_Tree p;
-    
-    int n;
-    cin>>n>>s;
 
     p.init(s);
-    cout<<p.LPS()<<endl;
+    cout << p.LPS() << endl;
 
     return 0;
 }
