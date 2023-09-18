@@ -84,6 +84,15 @@ struct SuffixAutomata {
         }
         return tot;
     }
+    int first_occurrence(string &s) {
+        int u = 0;
+        for(auto ch : s) {
+            if(!t[u].nxt.count(ch))
+                return -1;
+            u = t[u].nxt[ch];
+        }
+        return t[u].firstpos - s.size() + 1;
+    }
 };
 
 int32_t main() {
