@@ -24,9 +24,9 @@ int centroid(int u, int p, int n) {
 void build(int u = 1, int p = -1) {
     int n = dfs_sz(u, p);
     int c = centroid(u, p, n);
-    if(p == -1) {
-        p = c;
-    }
+    // if(p == -1) {
+    //     p = c;
+    // }
     par[c] = p;
     auto tmp = adj[c];
     for(auto v : tmp) {
