@@ -49,3 +49,36 @@ int query(int u) {
         mn = min(mn, ans[v] + cost(u, v));
     return mn;
 }
+
+//v2
+vector<int> adj[MAX];
+int sz[MAX];
+bool is_removed[MAX];
+
+int get_size(int u, int p = -1) {
+    sz[u] = 1;
+    for(auto v : adj[u]) {
+        if(v == p || is_removed[v]) continue;
+        sz[u] += get_size(v, u);
+    }
+    return sz[u];
+}
+int get_centroid(int u, int n, int p = -1) {
+    for(auto v : adj[u]) {
+        if(v == p || is_removed[v]) continue;
+        if(sz[v] * 2 > n) return get_centroid(v, n, u);
+    }
+    return u;
+}
+void build_centroid_decomposition(int u = 1) {
+    int c = get_centroid(u, get_size(u));
+
+    //do something
+    //f()
+
+    is_removed[c] = 1;
+    for(auto v : adj[c]) {
+        if(is_removed[v]) continue;
+        build_centroid_decomposition(v);
+    }
+}
