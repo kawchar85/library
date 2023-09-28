@@ -29,6 +29,15 @@ void init(int N, int root = 1) {
         }
     }
 }
+int kth(int u, int k) {
+    int p = u;
+    for(int i = 0; i <= LOG; i++) {
+        if(k & (1 << i)) {
+            if(~p) p = LCA[p][i];
+        }
+    }
+    return p;
+}
 //0(logN)
 int find_lca(int a, int b) {
     if(lvl[a] > lvl[b])   swap(a,b);
