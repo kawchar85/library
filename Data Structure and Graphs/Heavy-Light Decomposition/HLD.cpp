@@ -49,6 +49,15 @@ int pathQuery(int x, int y) {
     ret = merge(ret, query(id[x], id[y]));
     return ret;
 }
+void updatePath(int x, int y, int add) {
+    while (tp[x] != tp[y]) {
+        if (dep[tp[x]] < dep[tp[y]]) swap(x, y);
+        update(id[tp[x]], id[x], add);
+        x = par[tp[x]];
+    }
+    if (dep[x] > dep[y]) swap(x, y);
+    update(id[x], id[y], add);
+}
 void updateNode(int u, int val) {
     update(id[u], val);
 }
