@@ -2,19 +2,16 @@
 using namespace std;
 
 #define endl "\n"
-#define FAST ios_base::sync_with_stdio(false); cin.tie(NULL);
 #define MAX 200005
 typedef long long ll;
 
-struct info{
-    int l, r, prt, sz, val, ans, rev;
-};
-
 //1-Based index
 int N, treap;
-info tree[MAX];
+struct info{
+    int l, r, prt, sz, val, ans, rev;
+}tree[MAX];
 
-void init(){ N = 0; treap = -1; srand(time(0));}
+void init_treap(){ N = 0; treap = -1; srand(time(0));}
 
 int get_node(int val){
     tree[N].val = val;
@@ -24,7 +21,6 @@ int get_node(int val){
     tree[N].l = -1;
     tree[N].r = -1;
     tree[N].prt = rand() % 1000000000;
-
     return N++;
 }
 
@@ -37,6 +33,24 @@ void propagate(int t){
     swap(tree[t].l, tree[t].r);
     tree[t].rev = 0;
 }
+// void propagate(int t) { // lazy propagation
+//     //push down: T-->L,R
+//     if(t == -1)return;
+//     tree[t].val += tree[t].lazy;
+//     tree[t].ans += tree[t].lazy*tree[t].sz;
+//     int l = tree[t].l, r = tree[t].r;
+//     if(~l) {
+//         tree[l].rev ^= tree[t].rev;
+//         tree[l].lazy += tree[t].lazy;
+//     } 
+//     if(~r) {
+//         tree[r].rev ^= tree[t].rev;
+//         tree[r].lazy += tree[t].lazy;
+//     }
+//     if(tree[t].rev) swap(tree[t].l, tree[t].r);
+//     tree[t].lazy = 0;
+//     tree[t].rev = 0;
+// }
 
 void calibrate(int t){
     //push up: L,R-->Par
@@ -74,24 +88,7 @@ pair<int,int> split(int t, int key){
     calibrate(t);
     return ret;
 }
-//only for sorted list
-pair<int,int> split_by_value(int t, int val){
-    propagate(t);
-    if(t == -1) return {-1, -1};
-    pair<int,int> ret;
-    int l = tree[t].l, r = tree[t].r;
-    if(tree[t].val <= val){
-        ret = split_by_value(r, val);
-        tree[t].r = ret.first;
-        ret.first = t;
-    }else{
-        ret = split_by_value(l, val);
-        tree[t].l = ret.second;
-        ret.second = t;
-    }
-    calibrate(t);
-    return ret;
-}
+
 //v[0] = [1, l-1], v[1] = [l, r], v[2] = [r+1, N]
 vector<int> parts(int l, int r){
     vector<int> v(3);
@@ -122,7 +119,10 @@ int query(int l, int r){
     auto p = parts(l, r);
     int ret = tree[ p[1] ].ans;
     treap = merge(p[0], p[1], p[2]);
-    return ret ;
+    return ret;
+}
+int getVal(int pos) {
+    return query(pos, pos);
 }
 void move_to_beg(int l, int r){
     auto p = parts(l, r);
@@ -167,8 +167,25 @@ void print(int t = treap, int last = 1){
     print(tree[t].r, 0);
     if(last) cout << "\n";
 }
-//for sorted list
-int lower_bound(int val){
+//only for sorted list
+pair<int,int> split_by_value(int t, int val){
+    propagate(t);
+    if(t == -1) return {-1, -1};
+    pair<int,int> ret;
+    int l = tree[t].l, r = tree[t].r;
+    if(tree[t].val <= val){
+        ret = split_by_value(r, val);
+        tree[t].r = ret.first;
+        ret.first = t;
+    }else{
+        ret = split_by_value(l, val);
+        tree[t].l = ret.second;
+        ret.second = t;
+    }
+    calibrate(t);
+    return ret;
+}
+int order_ok_key(int val){
     //[<val][val][>val]
     auto p = split_by_value(treap, val);
     auto p2 = split_by_value(p.first, val-1);
@@ -187,18 +204,23 @@ int find_pos(int val){
     treap = merge(p2.first, p2.second, p.second);
     return pos;
 }
+int lower_bound(int val){
+    int pos = order_ok_key(val);
+    if(pos == N - 1) return INT_MAX;
+    return getVal(pos);
+}
+int upper_bound(int val){
+    return lower_bound(val + 1);
+}
 
-void solve(){
-
-    init();
+int32_t main() {
+    init_treap();
     ll n, x;
-
     cin >> n;
     for(int i = 0; i < n; i++){
         cin >> x;
         push_back(x);
     }
-
     print();
     update(3, 10); print();
     insert(3, 15); print();
@@ -207,29 +229,19 @@ void solve(){
     insert(3, 3); print();
 
     x = 10;
+    cout << order_ok_key(3) << endl;
+    cout << lower_bound(4) << endl;
     if(find_pos(x) == -1){
-        insert(lower_bound(x), x);
+        insert(order_ok_key(x), x);
     }
     print();
+    cout << lower_bound(8) << endl;
+    cout << lower_bound(12) << endl;
     
     x = 2;
     x = find_pos(x);
     if(~x) erase(x, x);
     print();
-}
-
-int32_t main()
-{
-    FAST
-    
-    ll TC=1LL,cs=1LL;
-
-    //cin>>TC;
-
-    while(TC--){
-        //CS(cs++);
-        solve();
-    }
 
     return 0;
 }
