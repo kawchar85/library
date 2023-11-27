@@ -13,7 +13,16 @@ struct wavelet_tree{
     wavelet_tree *l, *r;
     vector<int> b; //b[i]=how many elements from first i elements will go to the left subtree
     vector<int> c; //c holds the prefix sum of elements
- 
+    
+    wavelet_tree() {
+        lo = 1;
+        hi = 0;
+        b.clear();
+        c.clear();
+        l = NULL;
+        r = NULL;
+    }
+
     //nos are in range [x,y]
     //array indices are [from, to)
     //O(Log(maxV))
