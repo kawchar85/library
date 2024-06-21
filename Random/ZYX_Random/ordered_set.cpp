@@ -6,6 +6,8 @@ using namespace std;
 using namespace __gnu_pbds;
 
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update>
+// #define ordered_set tree<int, null_type, greater<int>, rb_tree_tag, tree_order_statistics_node_update>
+// #define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update>
 
 //usefull functions: find_by_order(),order_of_key()
 
